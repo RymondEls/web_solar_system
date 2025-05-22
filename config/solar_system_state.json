@@ -1,0 +1,350 @@
+[
+    {
+        "name": "Sun",
+        "type": "star",
+        "mass": 1989000000000000000000000000000,
+        "position": [
+            3414213.4051891407,
+            367213.2352910823
+        ],
+        "velocity": [
+            1.309606727777607,
+            0.19197687249716294
+        ],
+        "color": [
+            255,
+            255,
+            0
+        ],
+        "radius": 695700000,
+        "temperature": 5778
+    },
+    {
+        "name": "Mercury",
+        "type": "planet",
+        "mass": 330110000000000000000000,
+        "position": [
+            -31789965323.512646,
+            -49358769667.54311
+        ],
+        "velocity": [
+            39803.153994070104,
+            -25920.162359090427
+        ],
+        "color": [
+            128,
+            128,
+            128
+        ],
+        "radius": 2439700,
+        "atmosphere": "Thin, mostly oxygen, sodium, hydrogen",
+        "surface": "Rocky, cratered"
+    },
+    {
+        "name": "Venus",
+        "type": "planet",
+        "mass": 4867500000000000000000000,
+        "position": [
+            -6479651991.804204,
+            108037855277.8977
+        ],
+        "velocity": [
+            -34979.87263456944,
+            -2070.9390926719843
+        ],
+        "color": [
+            255,
+            165,
+            0
+        ],
+        "radius": 6051800,
+        "atmosphere": "Dense, carbon dioxide, nitrogen",
+        "surface": "Rocky, volcanic"
+    },
+    {
+        "name": "Earth",
+        "type": "planet",
+        "mass": 5972000000000000000000000,
+        "position": [
+            80471319242.67554,
+            126159450594.99483
+        ],
+        "velocity": [
+            -25111.515124348654,
+            16026.147262705326
+        ],
+        "color": [
+            0,
+            0,
+            255
+        ],
+        "radius": 6371000,
+        "atmosphere": "Nitrogen, oxygen",
+        "surface": "Rocky, water-covered"
+    },
+    {
+        "name": "Moon",
+        "type": "moon",
+        "mass": 73420000000000000000000,
+        "position": [
+            80903428353.18208,
+            126117674648.32483
+        ],
+        "velocity": [
+            -25035.36967314302,
+            16971.68741646891
+        ],
+        "color": [
+            192,
+            192,
+            192
+        ],
+        "radius": 1737000,
+        "parent_planet": "Earth"
+    },
+    {
+        "name": "Mars",
+        "type": "planet",
+        "mass": 641710000000000000000000,
+        "position": [
+            196237174934.86798,
+            115561704604.44412
+        ],
+        "velocity": [
+            -12278.513527858897,
+            20725.21565444215
+        ],
+        "color": [
+            255,
+            0,
+            0
+        ],
+        "radius": 3389500,
+        "atmosphere": "Thin, carbon dioxide",
+        "surface": "Rocky, dusty"
+    },
+    {
+        "name": "Phobos",
+        "type": "moon",
+        "mass": 10659000000000000,
+        "position": [
+            189007197336.55457,
+            112903308595.75322
+        ],
+        "velocity": [
+            -13957.392642634839,
+            20078.225787311992
+        ],
+        "color": [
+            128,
+            128,
+            128
+        ],
+        "radius": 11100,
+        "parent_planet": "Mars"
+    },
+    {
+        "name": "Deimos",
+        "type": "moon",
+        "mass": 1476200000000000,
+        "position": [
+            196242065222.20978,
+            115272723709.52159
+        ],
+        "velocity": [
+            -12046.138882952675,
+            20804.20282037249
+        ],
+        "color": [
+            128,
+            128,
+            128
+        ],
+        "radius": 6200,
+        "parent_planet": "Mars"
+    },
+    {
+        "name": "Jupiter",
+        "type": "planet",
+        "mass": 1898000000000000000000000000,
+        "position": [
+            775724956972.4482,
+            65753513446.43938
+        ],
+        "velocity": [
+            -1101.5408235560108,
+            13025.015758267291
+        ],
+        "color": [
+            255,
+            215,
+            0
+        ],
+        "radius": 69911000,
+        "atmosphere": "Hydrogen, helium",
+        "surface": "Gaseous"
+    },
+    {
+        "name": "Io",
+        "type": "moon",
+        "mass": 89319000000000000000000,
+        "position": [
+            773865513711.5977,
+            63665321208.97429
+        ],
+        "velocity": [
+            1586.6203507119144,
+            7883.729324206716
+        ],
+        "color": [
+            255,
+            165,
+            0
+        ],
+        "radius": 1821600,
+        "parent_planet": "Jupiter"
+    },
+    {
+        "name": "Europa",
+        "type": "moon",
+        "mass": 47998000000000000000000,
+        "position": [
+            773747268478.5227,
+            65320110383.080215
+        ],
+        "velocity": [
+            -773.1399976129715,
+            5190.958556987775
+        ],
+        "color": [
+            255,
+            255,
+            255
+        ],
+        "radius": 1560800,
+        "parent_planet": "Jupiter"
+    },
+    {
+        "name": "Saturn",
+        "type": "planet",
+        "mass": 568300000000000000000000000,
+        "position": [
+            1428174661905.3652,
+            48747991478.77715
+        ],
+        "velocity": [
+            -328.4089517037719,
+            9675.748413371437
+        ],
+        "color": [
+            210,
+            180,
+            140
+        ],
+        "radius": 58232000,
+        "atmosphere": "Hydrogen, helium",
+        "surface": "Gaseous"
+    },
+    {
+        "name": "Titan",
+        "type": "moon",
+        "mass": 134520000000000000000000,
+        "position": [
+            1418447848919.3381,
+            55785190128.823265
+        ],
+        "velocity": [
+            -2143.4284260034733,
+            9709.810665541054
+        ],
+        "color": [
+            255,
+            165,
+            0
+        ],
+        "radius": 2574700,
+        "parent_planet": "Saturn"
+    },
+    {
+        "name": "Uranus",
+        "type": "planet",
+        "mass": 86810000000000000000000000,
+        "position": [
+            2870795175013.6587,
+            34246711272.240906
+        ],
+        "velocity": [
+            -81.33684287951567,
+            6799.518098365104
+        ],
+        "color": [
+            0,
+            255,
+            255
+        ],
+        "radius": 25362000,
+        "atmosphere": "Hydrogen, helium, methane",
+        "surface": "Gaseous"
+    },
+    {
+        "name": "Neptune",
+        "type": "planet",
+        "mass": 102400000000000000000000000,
+        "position": [
+            4497916587764.301,
+            27347484091.846455
+        ],
+        "velocity": [
+            -33.1236447557919,
+            5429.899947336267
+        ],
+        "color": [
+            0,
+            0,
+            139
+        ],
+        "radius": 24622000,
+        "atmosphere": "Hydrogen, helium, methane",
+        "surface": "Gaseous"
+    },
+    {
+        "name": "Ceres",
+        "type": "asteroid",
+        "mass": 939300000000000000000,
+        "position": [
+            404229220714.4079,
+            89940565418.1627
+        ],
+        "velocity": [
+            -3864.2339478926583,
+            17574.908791785143
+        ],
+        "color": [
+            128,
+            128,
+            128
+        ],
+        "radius": 470000,
+        "composition": "Rocky, ice"
+    },
+    {
+        "name": "Halley",
+        "type": "comet",
+        "mass": 220000000000000,
+        "position": [
+            -22574831387.812054,
+            189824275579.0849
+        ],
+        "velocity": [
+            -27761.46733313261,
+            22786.415788763938
+        ],
+        "color": [
+            255,
+            255,
+            255
+        ],
+        "radius": 11000,
+        "tail_length": 1000000
+    }
+]

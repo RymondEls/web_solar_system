@@ -1,0 +1,83 @@
+[
+    {
+        "name": "Sun",
+        "mass": 1.989e30,
+        "position": [0, 0],
+        "velocity": [0, 0],
+        "color": [255, 255, 0],
+        "base_radius": 6.957e8,
+        "screen_radius": 10
+    },
+    {
+        "name": "Mercury",
+        "mass": 3.301e23,
+        "position": [4.6e10, 0],
+        "velocity": [0, 4.74e4],
+        "color": [169, 169, 169],
+        "base_radius": 2.439e6,
+        "screen_radius": 3
+    },
+    {
+        "name": "Venus",
+        "mass": 4.867e24,
+        "position": [1.08e11, 0],
+        "velocity": [0, 3.5e4],
+        "color": [255, 223, 196],
+        "base_radius": 6.052e6,
+        "screen_radius": 5
+    },
+    {
+        "name": "Earth",
+        "mass": 5.972e24,
+        "position": [1.496e11, 0],
+        "velocity": [0, 2.98e4],
+        "color": [0, 102, 204],
+        "base_radius": 6.371e6,
+        "screen_radius": 6
+    },
+    {
+        "name": "Mars",
+        "mass": 6.417e23,
+        "position": [2.279e11, 0],
+        "velocity": [0, 2.41e4],
+        "color": [188, 39, 50],
+        "base_radius": 3.390e6,
+        "screen_radius": 4
+    },
+    {
+        "name": "Jupiter",
+        "mass": 1.898e27,
+        "position": [7.785e11, 0],
+        "velocity": [0, 1.31e4],
+        "color": [204, 153, 102],
+        "base_radius": 6.9911e7,
+        "screen_radius": 9
+    },
+    {
+        "name": "Saturn",
+        "mass": 5.683e26,
+        "position": [1.433e12, 0],
+        "velocity": [0, 9.7e3],
+        "color": [210, 180, 140],
+        "base_radius": 5.8232e7,
+        "screen_radius": 8
+    },
+    {
+        "name": "Uranus",
+        "mass": 8.681e25,
+        "position": [2.877e12, 0],
+        "velocity": [0, 6.8e3],
+        "color": [173, 216, 230],
+        "base_radius": 2.5362e7,
+        "screen_radius": 7
+    },
+    {
+        "name": "Neptune",
+        "mass": 1.024e26,
+        "position": [4.503e12, 0],
+        "velocity": [0, 5.4e3],
+        "color": [0, 0, 128],
+        "base_radius": 2.4622e7,
+        "screen_radius": 7
+    }
+]

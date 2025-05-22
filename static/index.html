@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Симуляция Солнечной системы</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: black;
+        }
+        #simulationCanvas {
+            display: block;
+            width: 100vw;
+            height: calc(100vh - 60px);
+            image-rendering: crisp-edges;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+        button, select, input {
+            margin: 5px;
+            padding: 5px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="simulationCanvas"></canvas>
+    <div id="controls">
+        <button onclick="togglePause()">Пауза (P)</button>
+        <button onclick="adjustTimeScale(2)">Ускорить (+)</button>
+        <button onclick="adjustTimeScale(0.5)">Замедлить (-)</button>
+        <button onclick="toggleMenu()">Меню (M)</button>
+        <div id="status">
+            Масштаб времени: <span id="timeScale">1</span>x<br>
+            Пауза: <span id="pauseStatus">False</span>
+        </div>
+    </div>
+    <div id="menu">
+        <h3>Меню</h3>
+        <select id="menuAction">
+            <option value="1">Изучить атмосферу</option>
+            <option value="2">Изучить поверхность</option>
+            <option value="3">Собрать данные</option>
+            <option value="4">Запустить аппарат</option>
+            <option value="5">Следить за телом</option>
+        </select>
+        <div id="bodySelectDiv">
+            <select id="bodySelect"></select>
+        </div>
+        <div id="spacecraftForm" style="display: none;">
+            <input id="scName" placeholder="Название" /><br>
+            <input id="scMass" type="number" placeholder="Масса (кг)" /><br>
+            <input id="scRadius" type="number" placeholder="Радиус (м)" /><br>
+            <input id="scMission" placeholder="Миссия" /><br>
+            <input id="scVx" type="number" placeholder="Скорость X (м/с)" /><br>
+            <input id="scVy" type="number" placeholder="Скорость Y (м/с)" /><br>
+        </div>
+        <button onclick="executeMenuAction()">Выполнить</button>
+        <button onclick="toggleMenu()">Закрыть</button>
+    </div>
+    <script>
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+        let ws;
+        let dragging = false;
+        let lastMousePos = { x: 0, y: 0 };
+        let bodies = [];
+        let scene = { scale: 250 / 1.496e11, offset: [960, 480], pause: false, time_scale: 1 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - 60;
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight - 60}px`;
+            if (bodies.length && scene) drawBodies({ bodies, scene });
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function initWebSocket() {
+            ws = new WebSocket('ws://localhost:8000/ws/simulation');
+            ws.onopen = () => console.log('WebSocket подключен');
+            ws.onerror = (error) => console.error('Ошибка WebSocket:', error);
+            ws.onclose = () => {
+                console.log('WebSocket закрыт, переподключение...');
+                setTimeout(initWebSocket, 1000);
+            };
+            ws.onmessage = (event) => {
+                try {
+                    const startTime = performance.now();
+                    const data = JSON.parse(event.data);
+                    if (data.bodies && data.scene) {
+                        bodies = data.bodies;
+                        scene = data.scene;
+                        console.log(`Получено: offset=${scene.offset}, tracked_body=${scene.tracked_body}`);
+                        drawBodies(data);
+                        document.getElementById('timeScale').textContent = data.scene.time_scale.toFixed(2);
+                        document.getElementById('pauseStatus').textContent = data.scene.pause;
+                        updateBodySelect();
+                        console.log(`Рендеринг занял ${(performance.now() - startTime).toFixed(2)} мс`);
+                    } else {
+                        console.error('Неверный формат данных:', data);
+                    }
+                } catch (e) {
+                    console.error('Ошибка парсинга сообщения WebSocket:', e);
+                }
+            };
+        }
+        initWebSocket();
+
+        function drawBodies(data) {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (!data.bodies || !data.scene) {
+                console.error('Нет данных тел или сцены');
+                return;
+            }
+            ctx.font = '16px Arial';
+            data.bodies.forEach(body => {
+                if (!body.position || !body.color) {
+                    console.error('Неверные данные тела:', body);
+                    return;
+                }
+                const x = body.position[0] * data.scene.scale + data.scene.offset[0];
+                const y = body.position[1] * data.scene.scale + data.scene.offset[1];
+                const radius = Math.max(body.radius * data.scene.scale, 2);
+                if (body.name.toLowerCase() === 'sun') {
+                    console.log(`Sun rendered at x=${x}, y=${y}`);
+                }
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = `rgb(${body.color[0]},${body.color[1]},${body.color[2]})`;
+                ctx.fill();
+                if (body.type === 'comet' && body.tail_length) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    const tailEndX = x - body.velocity[0] * body.tail_length * data.scene.scale;
+                    const tailEndY = y - body.velocity[1] * body.tail_length * data.scene.scale;
+                    ctx.lineTo(tailEndX, tailEndY);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                    ctx.stroke();
+                }
+                ctx.fillStyle = 'white';
+                ctx.fillText(body.name || 'Unknown', x + radius + 5, y);
+            });
+        }
+
+        async function togglePause() {
+            await fetch('/scene/pause', { method: 'POST' });
+        }
+
+        async function adjustTimeScale(factor) {
+            await fetch(`/scene/time_scale/${factor}`, { method: 'POST' });
+        }
+
+        async function pan(dx, dy) {
+            if (isNaN(dx) || isNaN(dy)) {
+                console.error(`Некорректные dx=${dx}, dy=${dy}`);
+                return;
+            }
+            console.log(`Отправка pan: dx=${dx}, dy=${dy}`);
+            try {
+                const response = await fetch('/scene/pan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dx, dy })
+                });
+                const result = await response.json();
+                console.log(`Ответ pan: offset=${result.offset}`);
+            } catch (e) {
+                console.error('Ошибка при вызове /scene/pan:', e);
+            }
+        }
+
+        async function zoom(factor) {
+            await fetch(`/scene/zoom/${factor}`, { method: 'POST' });
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            updateMenu();
+        }
+
+        function updateMenu() {
+            const action = document.getElementById('menuAction').value;
+            document.getElementById('bodySelectDiv').style.display = action !== '4' ? 'block' : 'none';
+            document.getElementById('spacecraftForm').style.display = action === '4' ? 'block' : 'none';
+        }
+
+        function updateBodySelect() {
+            const action = document.getElementById('menuAction').value;
+            const select = document.getElementById('bodySelect');
+            const selectedValue = select.value;
+            select.innerHTML = '';
+            const filteredBodies = action === '1' || action === '2' ? bodies.filter(b => b.type === 'planet') : bodies;
+            console.log(`Заполнение bodySelect: ${filteredBodies.map(b => b.name).join(', ')}`);
+            filteredBodies.forEach(body => {
+                const option = document.createElement('option');
+                option.value = body.name;
+                option.textContent = body.name;
+                if (body.name === selectedValue) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        async function executeMenuAction() {
+            const action = document.getElementById('menuAction').value;
+            if (action === '4') {
+                const name = document.getElementById('scName').value;
+                const mass = parseFloat(document.getElementById('scMass').value);
+                const radius = parseFloat(document.getElementById('scRadius').value);
+                const mission = document.getElementById('scMission').value;
+                const vx = parseFloat(document.getElementById('scVx').value);
+                const vy = parseFloat(document.getElementById('scVy').value);
+                const earth = bodies.find(b => b.name === 'Earth');
+                const position = earth ? [earth.position[0], earth.position[1] + earth.radius + 10000] : [0, 6371000 + 10000];
+                const velocity = [vx || 0, vy || 0];
+                if (name && mass && radius && mission) {
+                    console.log(`Запуск аппарата: ${name}`);
+                    await fetch('/spacecraft/launch', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, mass, position, velocity, radius, mission })
+                    });
+                } else {
+                    alert('Пожалуйста, заполните все поля для космического аппарата.');
+                }
+            } else {
+                const bodyName = document.getElementById('bodySelect').value;
+                console.log(`Выполняется действие ${action} для тела: ${bodyName}`);
+                if (action === '1') {
+                    const response = await fetch(`/study/atmosphere/${bodyName}`);
+                    const { result } = await response.json();
+                    alert(result);
+                } else if (action === '2') {
+                    const response = await fetch(`/study/surface/${bodyName}`);
+                    const { result } = await response.json();
+                    alert(result);
+                } else if (action === '3') {
+                    const response = await fetch(`/collect/data/${bodyName}`);
+                    const data = await response.json();
+                    alert(JSON.stringify(data, null, 2));
+                } else if (action === '5') {
+                    console.log(`Отправка запроса на слежение за ${bodyName}`);
+                    try {
+                        const response = await fetch(`/scene/track/${bodyName}`, { method: 'POST' });
+                        const result = await response.json();
+                        console.log(`Ответ трекинга: ${result.tracked_body}`);
+                    } catch (e) {
+                        console.error('Ошибка при вызове /scene/track:', e);
+                    }
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (e.button === 0) {
+                dragging = true;
+                lastMousePos = { x: e.offsetX, y: e.offsetY };
+                console.log(`Начато перемещение: x=${lastMousePos.x}, y=${lastMousePos.y}`);
+                fetch('/scene/untrack', { method: 'POST' });
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (e.button === 0) {
+                dragging = false;
+                console.log('Перемещение завершено');
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (dragging) {
+                console.log(`Mouse: offsetX=${e.offsetX}, offsetY=${e.offsetY}`);
+                const dx = e.offsetX - lastMousePos.x;
+                const dy = e.offsetY - lastMousePos.y;
+                pan(dx, dy);
+                lastMousePos = { x: e.offsetX, y: e.offsetY };
+            }
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            const factor = e.deltaY < 0 ? 1.5 : 1/1.5;
+            zoom(factor);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p') togglePause();
+            if (e.key === '+' || e.key === '=') adjustTimeScale(2);
+            if (e.key === '-') adjustTimeScale(0.5);
+            if (e.key === 'm') toggleMenu();
+        });
+
+        document.getElementById('menuAction').addEventListener('change', updateMenu);
+    </script>
+</body>
+</html>
